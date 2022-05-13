@@ -1,7 +1,7 @@
 import express from 'express';
 import {createRequire} from "module";
 import swaggerUi from 'swagger-ui-express';
-import expense from "./routes/expense.js";
+import expenses from "./routes/expenses.js";
 
 const require = createRequire(import.meta.url);
 
@@ -18,4 +18,4 @@ app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
 // routes
-app.use('/test', expense)
+app.use('/expenses', expenses)

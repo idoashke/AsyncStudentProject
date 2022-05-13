@@ -5,10 +5,20 @@
     "title": "Expenses tracker API"
   },
   "paths": {
-    "/test": {
+    "/expenses/{user_id}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
       "get": {
-        "tags": ["Expenses"],
-        "summary": "get all user expernses",
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "get all user expenses",
         "responses": {
           "200": {
             "description": "OK"
