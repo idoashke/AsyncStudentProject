@@ -1,0 +1,20 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Expenses tracker API"
+  },
+  "paths": {
+    "/test": {
+      "get": {
+        "tags": ["Expenses"],
+        "summary": "get all user expernses",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

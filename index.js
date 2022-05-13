@@ -1,25 +1,9 @@
-var express = require("express"),
-    bodyParser = require("body-parser"),
-    swaggerJsdoc = require("swagger-jsdoc"),
-    swaggerUi = require("swagger-ui-express");
-var app = express();
+const express = require('express');
+const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
-const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "expenses tracker api",
-        },
-    },
-    apis: ["./routes/expense.js"],
-};
-
-const specs = swaggerJsdoc(options);
-app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs)
-);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.listen(3000, () => {
