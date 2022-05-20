@@ -25,6 +25,35 @@
           }
         }
       }
+    },
+    "/expense/{user_id}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "expense",
+          "in": "body",
+          "required": true,
+          "schema": {
+
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "Expense"
+        ],
+        "summary": "post a new Expense",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   }
 }
