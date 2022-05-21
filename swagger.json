@@ -5,7 +5,7 @@
     "title": "Expenses tracker API"
   },
   "paths": {
-    "/expenses/{user_id}": {
+    "/expenses/user/{user_id}": {
       "parameters": [
         {
           "name": "user_id",
@@ -26,7 +26,7 @@
         }
       }
     },
-    "/expense/{user_id}": {
+    "/expense/user/{user_id}": {
       "parameters": [
         {
           "name": "user_id",
@@ -39,7 +39,6 @@
           "in": "body",
           "required": true,
           "schema": {
-
           }
         }
       ],
@@ -48,6 +47,93 @@
           "Expense"
         ],
         "summary": "post a new Expense",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/expenses-statistics/user/{user_id}/year/{year}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "type": "number"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Expenses-statistics"
+        ],
+        "summary": "get al expenses by year, and statistics: sum and count",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/expenses-statistics/user/{user_id}/year/{year}/month/{month}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "year",
+          "in": "path",
+          "required": true,
+          "type": "number"
+        },
+        {
+          "name": "month",
+          "in": "path",
+          "required": true,
+          "type": "number"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Expenses-statistics"
+        ],
+        "summary": "get al expenses by month, and statistics: sum and count",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/expenses-statistics/user/{user_id}/category/{category}": {
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "category",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Expenses-statistics"
+        ],
+        "summary": "get al expenses by category, and statistics: sum and count",
         "responses": {
           "200": {
             "description": "OK"
