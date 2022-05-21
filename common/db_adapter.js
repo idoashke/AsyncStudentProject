@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import {NoExpensesForUser} from "./errors.js";
+import {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory} from "./errors.js";
+import expenses from "../routes/expenses.js";
 
 const connection = await mongoose.connect("mongodb+srv://admin:Password1@cluster0.umbnu.mongodb.net/expenses_tracker_app")
 const Expenses = connection.model('costs', {
@@ -20,8 +21,18 @@ async function get_all_expenses_by_user_id(user_id) {
     if ((doc === false) || (doc['expenses'].length < 1)) {
         throw new NoExpensesForUser()
     }
-    //TODO: if we add a delete expense so we need to add here a check for expenses array len
-    return doc.toJSON()["expenses"]
+    return {
+        "expenses": doc.toJSON()["expenses"],
+        "sum": doc.toJSON()["sum"]
+    }
+}
+
+async function get_expenses_list_from_docs(docs) {
+    const expenses_list = []
+    for (let i = 0; i < docs.length; i++) {
+        expenses_list.push(docs[i]["expenses"])
+    }
+    return expenses_list
 }
 
 async function get_current_sum_by_user_id(user_id) {
@@ -41,4 +52,63 @@ async function add_new_expense_by_user_id(user_id, expense) {
 }
 
 
-export {get_all_expenses_by_user_id, add_new_expense_by_user_id}
+async function get_expenses_statistic_by_dates(user_id, start_date, end_date) {
+    const sum_by_dates = await Expenses.aggregate([{$unwind: "$expenses"}, {
+        $match: {
+            user_id: user_id,
+            "expenses.date": {$gte: start_date, $lt: end_date}
+        }
+    }, {$group: {_id: null, sum: {$sum: "$expenses.cost"}}}
+    ])
+    const docs_by_dates = await Expenses.aggregate([{$unwind: "$expenses"}, {
+        $match: {
+            user_id: user_id,
+            "expenses.date": {$gte: start_date, $lt: end_date}
+        }
+    }
+    ])
+    if ((docs_by_dates == null) || docs_by_dates.length === 0) {
+        throw new NoExpensesBetweenDates()
+    }
+
+
+    return {
+        "number_of_expences": docs_by_dates.length,
+        "sum_of_expenses": sum_by_dates[0]["sum"],
+        "expenses": await get_expenses_list_from_docs(docs_by_dates)
+    }
+}
+
+async function get_expenses_statistic_by_category(user_id, category) {
+    const sum_by_category = await Expenses.aggregate([{$unwind: "$expenses"}, {
+        $match: {
+            user_id: user_id,
+            "expenses.category": category
+        }
+    }, {$group: {_id: null, sum: {$sum: "$expenses.cost"}}}
+    ])
+
+    const docs_by_category = await Expenses.aggregate([{$unwind: "$expenses"}, {
+        $match: {
+            user_id: user_id,
+            "expenses.category": category
+        }
+    }
+    ])
+    if ((docs_by_category == null) || docs_by_category.length === 0) {
+        throw new NoExpensesWithCurrentCategory()
+    }
+    return {
+        "number_of_expences": docs_by_category.length,
+        "sum_of_expenses": sum_by_category[0]["sum"],
+        "expenses": await get_expenses_list_from_docs(docs_by_category)
+    }
+
+}
+
+export {
+    get_all_expenses_by_user_id,
+    add_new_expense_by_user_id,
+    get_expenses_statistic_by_dates,
+    get_expenses_statistic_by_category
+}

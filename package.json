@@ -4,6 +4,7 @@
     "body-parser": "^1.20.0",
     "body-schema": "^0.0.1",
     "express": "^4.18.1",
+    "express-basic-auth": "^1.2.1",
     "mongoose": "^6.3.3",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.3.0",
