@@ -4,6 +4,19 @@
     "version": "1.0.0",
     "title": "Expenses tracker API"
   },
+  "securityDefinitions": {
+    "BasicAuth": {
+      "name": "Authorization",
+      "in": "header",
+      "type": "basic",
+      "description": "basic http auth header"
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
   "paths": {
     "/expenses/user/{user_id}": {
       "parameters": [
@@ -134,6 +147,28 @@
           "Expenses-statistics"
         ],
         "summary": "get al expenses by category, and statistics: sum and count",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user": {
+      "parameters": [
+        {
+          "name": "user",
+          "in": "body",
+          "required": true,
+          "schema": {
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "post a new User",
         "responses": {
           "200": {
             "description": "OK"
