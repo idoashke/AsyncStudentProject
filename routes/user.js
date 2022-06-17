@@ -1,0 +1,62 @@
+import {Router} from 'express';
+import {createRequire} from "module";
+import {insert_new_user} from "../common/db_adapter.js";
+import {check_if_user_exists} from "../common/validators.js";
+import {UserAlreadyExist} from "../common/errors.js";
+
+const require = createRequire(import.meta.url);
+
+
+const bodySchema = require('body-schema');
+
+var user_schema = {
+    'type': 'object',
+    'properties': {
+        'user_id': {'type': 'string'},
+        'first_name': {'type': 'string'},
+        'last_name': {'type': 'string'},
+        'password': {'type': 'string'},
+        'birthday_day': {'type': 'number'},
+        'birthday_month': {'type': 'number'},
+        'birthday_year': {'type': 'number'},
+        'marital_status': {'type': 'string'}
+
+    },
+    'required': ['user_id', 'first_name', 'last_name', 'password', 'birthday_day', 'birthday_month', 'birthday_year', 'marital_status']
+};
+
+const router = Router();
+
+async function create_user_context(req_body_params) {
+    return {
+        "user_id": req_body_params.user_id,
+        "first_name": req_body_params.first_name,
+        "last_name": req_body_params.last_name,
+        "password": req_body_params.password,
+        "birthday": new Date(req_body_params.birthday_year, parseInt(req_body_params.birthday_month) - 1, req_body_params.birthday_day),
+        "marital_status": req_body_params.marital_status
+    }
+}
+
+
+router.post("", bodySchema(user_schema), async (req, res, next) => {
+    try {
+        let user_context = await create_user_context(req.body)
+        await check_if_user_exists(user_context.user_id)
+        await insert_new_user(user_context)
+        res.json(user_context.user_id);
+
+    } catch (e) {
+        if (e instanceof UserAlreadyExist) {
+            res.status(409)
+            next(e)
+        } else {
+            res.status(500)
+            next(e)
+        }
+    }
+
+});
+
+
+export default router;
