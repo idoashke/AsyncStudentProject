@@ -1,8 +1,8 @@
 import {Router} from 'express';
 import {get_all_expenses_by_user_id} from "../common/db_adapter.js";
-import {NoExpensesForUser} from "../common/errors.js";
+import {NoExpensesForUser, PermissionDenied} from "../common/errors.js";
 import expressBasicAuth from "express-basic-auth";
-import {validate_user} from "../common/validators.js";
+import {validate_user, check_for_permission} from "../common/validators.js";
 
 const router = Router();
 router.use(expressBasicAuth({
@@ -13,19 +13,24 @@ router.use(expressBasicAuth({
 }))
 
 router.get("/:user_id", async (req, res, next) => {
-    try {
-        let expenses = await get_all_expenses_by_user_id(req.params.user_id)
-        res.json(expenses);
-    } catch (e) {
-        if (e instanceof NoExpensesForUser) {
-            res.status(404)
-            next(e)
-        } else {
-            res.status(500)
-            next(e)
+        try {
+            await check_for_permission(req.auth["user"], req.params.user_id)
+            let expenses = await get_all_expenses_by_user_id(req.params.user_id)
+            res.json(expenses);
+        } catch (e) {
+            if (e instanceof NoExpensesForUser) {
+                res.status(404)
+                next(e)
+            } else if (e instanceof PermissionDenied) {
+                res.status(403)
+                next(e)
+            } else {
+                res.status(500)
+                next(e)
+            }
         }
+
     }
-
-});
-
+)
+;
 export default router;

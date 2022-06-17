@@ -1,13 +1,13 @@
 import {Router} from 'express';
 import {createRequire} from "module";
 import {add_new_expense_by_user_id} from "../common/db_adapter.js";
-import {NoExpensesForUser} from "../common/errors.js";
+import {NoExpensesForUser, PermissionDenied} from "../common/errors.js";
 
 const require = createRequire(import.meta.url);
 
 import {v4 as uuidv4} from 'uuid';
 import expressBasicAuth from "express-basic-auth";
-import {validate_user} from "../common/validators.js";
+import {check_for_permission, validate_user} from "../common/validators.js";
 
 const bodySchema = require('body-schema');
 
@@ -47,6 +47,7 @@ async function create_expense_context(req_body_params) {
 
 router.post("/:user_id", bodySchema(expense_schema), async (req, res, next) => {
     try {
+        await check_for_permission(req.auth["user"], req.params.user_id)
         let expense_context = await create_expense_context(req.body)
         await add_new_expense_by_user_id(req.params.user_id, expense_context)
         res.json(expense_context.id);
@@ -54,6 +55,9 @@ router.post("/:user_id", bodySchema(expense_schema), async (req, res, next) => {
     } catch (e) {
         if (e instanceof NoExpensesForUser) {
             res.status(404)
+            next(e)
+        } else if (e instanceof PermissionDenied) {
+            res.status(403)
             next(e)
         } else {
             res.status(500)

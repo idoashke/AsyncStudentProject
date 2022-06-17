@@ -17,10 +17,17 @@ class NoExpensesWithCurrentCategory extends Error {
     }
 }
 
-class UserAlreadyExist extends  Error {
+class UserAlreadyExist extends Error {
     constructor() {
         super("User is already exists");
     }
 }
 
-export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory, UserAlreadyExist}
+class PermissionDenied extends Error {
+    constructor() {
+        super("The user does not have the appropriate permissions for the operation");
+    }
+}
+
+
+export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory, UserAlreadyExist, PermissionDenied}
