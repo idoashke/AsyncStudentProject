@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import expressBasicAuth from "express-basic-auth";
-import {validate_user} from "../common/validators.js";
+import {validate_user} from "../public/validators.js";
 
 const router = Router();
 router.use(expressBasicAuth({
@@ -10,7 +10,7 @@ router.use(expressBasicAuth({
     authorizeAsync: true,
 }))
 
-router.get("", async (req, res, next) => {
+router.get("", async (req, res) => {
         res.json(true);
 });
 

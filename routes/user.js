@@ -1,8 +1,8 @@
 import {Router} from 'express';
 import {createRequire} from "module";
-import {insert_new_user} from "../common/db_adapter.js";
-import {check_if_user_exists} from "../common/validators.js";
-import {UserAlreadyExist} from "../common/errors.js";
+import {insert_new_user} from "../public/db_adapter.js";
+import {check_if_user_exists} from "../public/validators.js";
+import {UserAlreadyExist} from "../public/errors.js";
 
 const require = createRequire(import.meta.url);
 

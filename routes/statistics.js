@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import {NoExpensesBetweenDates, NoExpensesWithCurrentCategory, PermissionDenied} from "../common/errors.js";
-import {get_expenses_statistic_by_dates, get_expenses_statistic_by_category} from "../common/db_adapter.js";
+import {NoExpensesBetweenDates, NoExpensesWithCurrentCategory, PermissionDenied} from "../public/errors.js";
+import {get_expenses_statistic_by_dates, get_expenses_statistic_by_category} from "../public/db_adapter.js";
 import expressBasicAuth from "express-basic-auth";
-import {check_for_permission, validate_user} from "../common/validators.js";
+import {check_for_permission, validate_user} from "../public/validators.js";
 
 const router = Router();
 

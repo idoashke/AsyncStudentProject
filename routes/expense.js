@@ -1,13 +1,13 @@
 import {Router} from 'express';
 import {createRequire} from "module";
-import {add_new_expense_by_user_id} from "../common/db_adapter.js";
-import {NoExpensesForUser, PermissionDenied} from "../common/errors.js";
+import {add_new_expense_by_user_id} from "../public/db_adapter.js";
+import {NoExpensesForUser, PermissionDenied} from "../public/errors.js";
 
 const require = createRequire(import.meta.url);
 
 import {v4 as uuidv4} from 'uuid';
 import expressBasicAuth from "express-basic-auth";
-import {check_for_permission, validate_user} from "../common/validators.js";
+import {check_for_permission, validate_user} from "../public/validators.js";
 
 const bodySchema = require('body-schema');
 

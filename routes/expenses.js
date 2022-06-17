@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import {get_all_expenses_by_user_id} from "../common/db_adapter.js";
-import {NoExpensesForUser, PermissionDenied} from "../common/errors.js";
+import {get_all_expenses_by_user_id} from "../public/db_adapter.js";
+import {NoExpensesForUser, PermissionDenied} from "../public/errors.js";
 import expressBasicAuth from "express-basic-auth";
-import {validate_user, check_for_permission} from "../common/validators.js";
+import {validate_user, check_for_permission} from "../public/validators.js";
 
 const router = Router();
 router.use(expressBasicAuth({
