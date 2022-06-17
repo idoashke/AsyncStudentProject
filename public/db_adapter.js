@@ -9,16 +9,16 @@ const Expenses = connection.model('costs', {
 })
 
 
-async function is_cost_doc_exist(user_id) {
-    const doc = await Expenses.findOne({user_id: user_id});
+async function isCostDocExist(userId) {
+    const doc = await Expenses.findOne({user_id: userId});
     if (doc == null) {
         return false
     }
     return doc
 }
 
-async function get_all_expenses_by_user_id(user_id) {
-    const doc = await is_cost_doc_exist(user_id);
+async function getAllExpensesByUserId(userId) {
+    const doc = await isCostDocExist(userId);
     if ((doc === false) || (doc['expenses'].length < 1)) {
         throw new NoExpensesForUser()
     }
@@ -28,81 +28,81 @@ async function get_all_expenses_by_user_id(user_id) {
     }
 }
 
-async function get_expenses_list_from_docs(docs) {
-    const expenses_list = []
+async function getExpensesListFromDocs(docs) {
+    const expensesList = []
     for (let i = 0; i < docs.length; i++) {
-        expenses_list.push(docs[i]["expenses"])
+        expensesList.push(docs[i]["expenses"])
     }
-    return expenses_list
+    return expensesList
 }
 
-async function get_current_sum_by_user_id(user_id) {
-    const doc = await Expenses.findOne({user_id: user_id});
+async function getCurrentSumByUserId(userId) {
+    const doc = await Expenses.findOne({user_id: userId});
     return doc.toJSON()["sum"]
 }
 
 
-async function add_new_expense_by_user_id(user_id, expense) {
-    if (await is_cost_doc_exist(user_id) === false) {
-        const doc = new Expenses({user_id: user_id, expense: [], sum: 0})
+async function addNewExpenseByUserId(userId, expense) {
+    if (await isCostDocExist(userId) === false) {
+        const doc = new Expenses({user_id: userId, expense: [], sum: 0})
         await doc.save()
     }
-    let new_sum = await get_current_sum_by_user_id(user_id)
-    new_sum = new_sum + expense.cost
-    await Expenses.updateOne({user_id: user_id}, {$push: {expenses: expense}, $set: {sum: new_sum}});
+    let newSum = await getCurrentSumByUserId(userId)
+    newSum = newSum + expense.cost
+    await Expenses.updateOne({user_id: userId}, {$push: {expenses: expense}, $set: {sum: newSum}});
 }
 
 
-async function get_expenses_statistic_by_dates(user_id, start_date, end_date) {
-    const sum_by_dates = await Expenses.aggregate([{$unwind: "$expenses"}, {
+async function getExpensesStatisticByDates(userId, startDate, endDate) {
+    const sumByDates = await Expenses.aggregate([{$unwind: "$expenses"}, {
         $match: {
-            user_id: user_id,
-            "expenses.date": {$gte: start_date, $lt: end_date}
+            user_id: userId,
+            "expenses.date": {$gte: startDate, $lt: endDate}
         }
     }, {$group: {_id: null, sum: {$sum: "$expenses.cost"}}}
     ])
-    const docs_by_dates = await Expenses.aggregate([{$unwind: "$expenses"}, {
+    const docsByDates = await Expenses.aggregate([{$unwind: "$expenses"}, {
         $match: {
-            user_id: user_id,
-            "expenses.date": {$gte: start_date, $lt: end_date}
+            user_id: userId,
+            "expenses.date": {$gte: startDate, $lt: endDate}
         }
     }
     ])
-    if ((docs_by_dates == null) || docs_by_dates.length === 0) {
+    if ((docsByDates == null) || docsByDates.length === 0) {
         throw new NoExpensesBetweenDates()
     }
 
 
     return {
-        "number_of_expences": docs_by_dates.length,
-        "sum_of_expenses": sum_by_dates[0]["sum"],
-        "expenses": await get_expenses_list_from_docs(docs_by_dates)
+        "number_of_expences": docsByDates.length,
+        "sum_of_expenses": sumByDates[0]["sum"],
+        "expenses": await getExpensesListFromDocs(docsByDates)
     }
 }
 
-async function get_expenses_statistic_by_category(user_id, category) {
-    const sum_by_category = await Expenses.aggregate([{$unwind: "$expenses"}, {
+async function getExpensesStatisticByCategory(userId, category) {
+    const sumByCategory = await Expenses.aggregate([{$unwind: "$expenses"}, {
         $match: {
-            user_id: user_id,
+            user_id: userId,
             "expenses.category": category
         }
     }, {$group: {_id: null, sum: {$sum: "$expenses.cost"}}}
     ])
 
-    const docs_by_category = await Expenses.aggregate([{$unwind: "$expenses"}, {
+    const docsByCategory = await Expenses.aggregate([{$unwind: "$expenses"}, {
         $match: {
-            user_id: user_id,
+            user_id: userId,
             "expenses.category": category
         }
     }
     ])
-    if ((docs_by_category == null) || docs_by_category.length === 0) {
+    if ((docsByCategory == null) || docsByCategory.length === 0) {
         throw new NoExpensesWithCurrentCategory()
     }
     return {
-        "number_of_expences": docs_by_category.length,
-        "sum_of_expenses": sum_by_category[0]["sum"],
-        "expenses": await get_expenses_list_from_docs(docs_by_category)
+        "number_of_expences": docsByCategory.length,
+        "sum_of_expenses": sumByCategory[0]["sum"],
+        "expenses": await getExpensesListFromDocs(docsByCategory)
     }
 
 }
@@ -117,8 +117,8 @@ const User = connection.model('users', {
 })
 
 
-async function insert_new_user(user) {
-    const user_doc = new User({
+async function insertNewUser(user) {
+    const userDoc = new User({
         user_id: user.user_id,
         first_name: user.first_name,
         last_name: user.first_name,
@@ -127,28 +127,28 @@ async function insert_new_user(user) {
         marital_status: user.marital_status
     })
 
-    await user_doc.save()
+    await userDoc.save()
 
 }
 
-async function is_user_exists(user_id) {
+async function isUserExists(user_id) {
     const doc = await User.findOne({user_id: user_id});
     return doc != null;
 
 
 }
-async function get_user_by_username(user_id) {
+async function getUserByUsername(user_id) {
     const doc = await User.findOne({user_id: user_id});
     return  doc.toJSON()
 }
 
 
 export {
-    get_all_expenses_by_user_id,
-    add_new_expense_by_user_id,
-    get_expenses_statistic_by_dates,
-    get_expenses_statistic_by_category,
-    insert_new_user,
-    is_user_exists,
-    get_user_by_username
+    getAllExpensesByUserId,
+    addNewExpenseByUserId,
+    getExpensesStatisticByDates,
+    getExpensesStatisticByCategory,
+    insertNewUser,
+    isUserExists,
+    getUserByUsername
 }

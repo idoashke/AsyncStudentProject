@@ -1,11 +1,11 @@
 import {Router} from 'express';
 import expressBasicAuth from "express-basic-auth";
-import {validate_user} from "../public/validators.js";
+import {validateUser} from "../public/validators.js";
 
 const router = Router();
 router.use(expressBasicAuth({
     authorizer: async (username, password, cb) => {
-        await validate_user(username, password, cb)
+        await validateUser(username, password, cb)
     },
     authorizeAsync: true,
 }))

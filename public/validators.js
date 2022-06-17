@@ -1,19 +1,19 @@
-import {is_user_exists} from "./db_adapter.js";
+import {isUserExists} from "./db_adapter.js";
 import {UserAlreadyExist, PermissionDenied} from "./errors.js";
-import {get_user_by_username} from "./db_adapter.js";
+import {getUserByUsername} from "./db_adapter.js";
 import expressBasicAuth from "express-basic-auth";
 
 
-async function get_user_creds(username) {
-    if (await is_user_exists(username) === false) {
+async function getUserCreds(username) {
+    if (await isUserExists(username) === false) {
         return false
     }
-    const user_creds = await get_user_by_username(username)
+    const user_creds = await getUserByUsername(username)
     return [username, user_creds["password"]]
 }
 
-async function validate_user(username, password, cb) {
-    const creds = await get_user_creds(username)
+async function validateUser(username, password, cb) {
+    const creds = await getUserCreds(username)
     if (creds === false)
         return cb(null, false)
     const userMatches = expressBasicAuth.safeCompare(username, creds[0])
@@ -24,13 +24,13 @@ async function validate_user(username, password, cb) {
         return cb(null, false)
 }
 
-async function check_for_permission(auth_user_id, req_user_id) {
-    if (auth_user_id !== req_user_id) throw new PermissionDenied
+async function checkForPermission(authUser, reqUser) {
+    if (authUser !== reqUser) throw new PermissionDenied
 }
 
-async function check_if_user_exists(user_id) {
-    if (await is_user_exists(user_id) === true) throw new UserAlreadyExist()
+async function DoesUserExist(userId) {
+    if (await isUserExists(userId) === true) throw new UserAlreadyExist()
 
 }
 
-export {get_user_creds, check_if_user_exists, validate_user, check_for_permission}
+export {getUserCreds, DoesUserExist, validateUser, checkForPermission}
