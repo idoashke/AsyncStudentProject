@@ -139,7 +139,7 @@ async function is_user_exists(user_id) {
 }
 async function get_user_by_username(user_id) {
     const doc = await User.findOne({user_id: user_id});
-    return  (user_id , doc["password"])
+    return  doc.toJSON()
 }
 
 

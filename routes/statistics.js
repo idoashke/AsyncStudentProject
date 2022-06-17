@@ -1,8 +1,18 @@
 import {Router} from 'express';
 import {NoExpensesBetweenDates, NoExpensesWithCurrentCategory} from "../common/errors.js";
 import {get_expenses_statistic_by_dates, get_expenses_statistic_by_category} from "../common/db_adapter.js";
+import expressBasicAuth from "express-basic-auth";
+import {validate_user} from "../common/validators.js";
 
 const router = Router();
+
+router.use(expressBasicAuth({
+    authorizer: async (username, password, cb) => {
+        await validate_user(username,password,cb)
+    },
+    authorizeAsync: true,
+}))
+
 
 router.get("/:user_id/year/:year", async (req, res, next) => {
     try {

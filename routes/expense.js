@@ -6,6 +6,8 @@ import {NoExpensesForUser} from "../common/errors.js";
 const require = createRequire(import.meta.url);
 
 import {v4 as uuidv4} from 'uuid';
+import expressBasicAuth from "express-basic-auth";
+import {validate_user} from "../common/validators.js";
 
 const bodySchema = require('body-schema');
 
@@ -26,6 +28,12 @@ var expense_schema = {
     'required': ['cost', 'description', 'category']
 };
 const router = Router();
+router.use(expressBasicAuth({
+    authorizer: async (username, password, cb) => {
+        await validate_user(username, password, cb)
+    },
+    authorizeAsync: true,
+}))
 
 async function create_expense_context(req_body_params) {
     return {

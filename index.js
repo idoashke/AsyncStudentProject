@@ -17,17 +17,7 @@ const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json())
-app.use(expressBasicAuth({
-    authorizer: (username, password, cb) => {
-        const userMatches = expressBasicAuth.safeCompare(username, 'demo')
-        const passwordMatches = expressBasicAuth.safeCompare(password, 'Password1')
-        if (userMatches & passwordMatches)
-            return cb(null, true)
-        else
-            return cb(null, false)
-    },
-    authorizeAsync: true,
-}))
+
 
 
 app.listen(3000, () => {
