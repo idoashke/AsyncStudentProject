@@ -5,8 +5,7 @@ import expenses from "./routes/expenses.js";
 import expense from "./routes/expense.js";
 import statistics from "./routes/statistics.js";
 import expressBasicAuth from "express-basic-auth";
-import {authorize} from "./common/auth.js";
-import user from "./routes/User.js";
+import user from "./routes/user.js";
 
 const require = createRequire(import.meta.url);
 

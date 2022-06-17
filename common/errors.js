@@ -1,20 +1,26 @@
 class NoExpensesForUser extends Error {
     constructor() {
-        super("no expenses were found for this user");
+        super("No expenses were found for this user");
         this.name = "NoExpensesForUser";
     }
 }
 
 class NoExpensesBetweenDates extends Error {
     constructor() {
-        super("no Expenses were found for this user in those current dates");
+        super("No Expenses were found for this user in those current dates");
     }
 }
 
 class NoExpensesWithCurrentCategory extends Error {
     constructor() {
-        super("no Expenses were found for this user with this category");
+        super("No Expenses were found for this user with this category");
     }
 }
 
-export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory}
+class UserAlreadyExist extends  Error {
+    constructor() {
+        super("User is already exists");
+    }
+}
+
+export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory, UserAlreadyExist}

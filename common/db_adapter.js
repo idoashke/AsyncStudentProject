@@ -126,8 +126,20 @@ async function insert_new_user(user) {
         birthday: user.birthday,
         marital_status: user.marital_status
     })
+
     await user_doc.save()
 
+}
+
+async function is_user_exists(user_id) {
+    const doc = await User.findOne({user_id: user_id});
+    return doc != null;
+
+
+}
+async function get_user_by_username(user_id) {
+    const doc = await User.findOne({user_id: user_id});
+    return  (user_id , doc["password"])
 }
 
 
@@ -136,5 +148,7 @@ export {
     add_new_expense_by_user_id,
     get_expenses_statistic_by_dates,
     get_expenses_statistic_by_category,
-    insert_new_user
+    insert_new_user,
+    is_user_exists,
+    get_user_by_username
 }

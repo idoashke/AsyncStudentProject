@@ -1,7 +1,8 @@
 import {Router} from 'express';
 import {createRequire} from "module";
 import {insert_new_user} from "../common/db_adapter.js";
-import {NoExpensesForUser} from "../common/errors.js";
+import {check_if_user_exists} from "../common/validators.js";
+import {UserAlreadyExist} from "../common/errors.js";
 
 const require = createRequire(import.meta.url);
 
@@ -37,15 +38,17 @@ async function create_user_context(req_body_params) {
     }
 }
 
+
 router.post("", bodySchema(user_schema), async (req, res, next) => {
     try {
         let user_context = await create_user_context(req.body)
+        await check_if_user_exists(user_context.user_id)
         await insert_new_user(user_context)
         res.json(user_context.user_id);
 
     } catch (e) {
-        if (e instanceof NoExpensesForUser) {
-            res.status(404)
+        if (e instanceof UserAlreadyExist) {
+            res.status(409)
             next(e)
         } else {
             res.status(500)
@@ -54,5 +57,6 @@ router.post("", bodySchema(user_schema), async (req, res, next) => {
     }
 
 });
+
 
 export default router;
