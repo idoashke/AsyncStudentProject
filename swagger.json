@@ -175,6 +175,19 @@
           }
         }
       }
+    },
+    "/is_authorize": {
+      "get": {
+        "tags": [
+          "authorize"
+        ],
+        "summary": "check for user permission",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   }
 }
