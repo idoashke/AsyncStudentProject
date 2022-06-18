@@ -1,17 +1,17 @@
 import {Router} from 'express';
 import {createRequire} from "module";
-import {add_new_expense_by_user_id} from "../common/db_adapter.js";
-import {NoExpensesForUser, PermissionDenied} from "../common/errors.js";
+import {addNewExpenseByUserId} from "../public/db_adapter.js";
+import {NoExpensesForUser, PermissionDenied} from "../public/errors.js";
 
 const require = createRequire(import.meta.url);
 
 import {v4 as uuidv4} from 'uuid';
 import expressBasicAuth from "express-basic-auth";
-import {check_for_permission, validate_user} from "../common/validators.js";
+import {checkForPermission, validateUser} from "../public/validators.js";
 
 const bodySchema = require('body-schema');
 
-var expense_schema = {
+var expenseSchema = {
     'type': 'object',
     'properties': {
         'cost': {
@@ -30,27 +30,27 @@ var expense_schema = {
 const router = Router();
 router.use(expressBasicAuth({
     authorizer: async (username, password, cb) => {
-        await validate_user(username, password, cb)
+        await validateUser(username, password, cb)
     },
     authorizeAsync: true,
 }))
 
-async function create_expense_context(req_body_params) {
+async function ProvideExpenseContext(reqBodyParams) {
     return {
         "id": uuidv4().toString(),
-        "cost": req_body_params.cost,
-        "description": req_body_params.description,
-        "category": req_body_params.category,
+        "cost": reqBodyParams.cost,
+        "description": reqBodyParams.description,
+        "category": reqBodyParams.category,
         "date": new Date(Date.now())
     }
 }
 
-router.post("/:user_id", bodySchema(expense_schema), async (req, res, next) => {
+router.post("/:user_id", bodySchema(expenseSchema), async (req, res, next) => {
     try {
-        await check_for_permission(req.auth["user"], req.params.user_id)
-        let expense_context = await create_expense_context(req.body)
-        await add_new_expense_by_user_id(req.params.user_id, expense_context)
-        res.json(expense_context.id);
+        await checkForPermission(req.auth["user"], req.params.user_id)
+        let expenseContext = await ProvideExpenseContext(req.body)
+        await addNewExpenseByUserId(req.params.user_id, expenseContext)
+        res.json(expenseContext.id);
 
     } catch (e) {
         if (e instanceof NoExpensesForUser) {
