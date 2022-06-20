@@ -11,7 +11,7 @@ import {checkForPermission, validateUser} from "../public/validators.js";
 
 const bodySchema = require('body-schema');
 
-var expenseSchema = {
+const expenseSchema = {
     'type': 'object',
     'properties': {
         'cost': {

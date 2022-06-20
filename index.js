@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import {createRequire} from "module";
 import swaggerUi from 'swagger-ui-express';
 import expenses from "./routes/expenses.js";
@@ -13,15 +14,15 @@ const swaggerDocument = require('./swagger.json')
 
 
 const app = express();
-
+app.use(cors())
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json())
 
 
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+app.listen(9000, () => {
+    console.log("Server running on port 9000");
 });
 // routes
 app.use('/expenses/user', expenses)
