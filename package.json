@@ -3,6 +3,7 @@
   "dependencies": {
     "body-parser": "^1.20.0",
     "body-schema": "^0.0.1",
+    "cors": "^2.8.5",
     "express": "^4.18.1",
     "express-basic-auth": "^1.2.1",
     "mongoose": "^6.3.3",
