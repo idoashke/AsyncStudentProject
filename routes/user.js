@@ -55,7 +55,6 @@ router.post("", bodySchema(user_schema), async (req, res, next) => {
             next(e);
         }
     }
-
 });
 
 
