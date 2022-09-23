@@ -30,4 +30,4 @@ class PermissionDenied extends Error {
 }
 
 
-export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory, UserAlreadyExist, PermissionDenied}
+export {NoExpensesForUser, NoExpensesBetweenDates, NoExpensesWithCurrentCategory, UserAlreadyExist, PermissionDenied};

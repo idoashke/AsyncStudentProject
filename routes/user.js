@@ -35,24 +35,24 @@ async function create_user_context(req_body_params) {
         "password": req_body_params.password,
         "birthday": new Date(req_body_params.birthday_year, parseInt(req_body_params.birthday_month) - 1, req_body_params.birthday_day),
         "marital_status": req_body_params.marital_status
-    }
+    };
 }
 
 
 router.post("", bodySchema(user_schema), async (req, res, next) => {
     try {
-        let user_context = await create_user_context(req.body)
-        await DoesUserExist(user_context.user_id)
-        await insertNewUser(user_context)
+        let user_context = await create_user_context(req.body);
+        await DoesUserExist(user_context.user_id);
+        await insertNewUser(user_context);
         res.json(user_context.user_id);
 
     } catch (e) {
         if (e instanceof UserAlreadyExist) {
-            res.status(409)
-            next(e)
+            res.status(409);
+            next(e);
         } else {
-            res.status(500)
-            next(e)
+            res.status(500);
+            next(e);
         }
     }
 

@@ -7,10 +7,10 @@ import {validateUser, checkForPermission} from "../public/validators.js";
 const router = Router();
 router.use(expressBasicAuth({
     authorizer: async (username, password, cb) => {
-        await validateUser(username, password, cb)
+        await validateUser(username, password, cb);
     },
     authorizeAsync: true,
-}))
+}));
 
 router.get("/:user_id", async (req, res, next) => {
         try {
@@ -19,18 +19,18 @@ router.get("/:user_id", async (req, res, next) => {
             res.json(expenses);
         } catch (e) {
             if (e instanceof NoExpensesForUser) {
-                res.status(404)
-                next(e)
+                res.status(404);
+                next(e);
             } else if (e instanceof PermissionDenied) {
-                res.status(403)
-                next(e)
+                res.status(403);
+                next(e);
             } else {
-                res.status(500)
-                next(e)
+                res.status(500);
+                next(e);
             }
         }
 
     }
-)
-;
+);
+
 export default router;
