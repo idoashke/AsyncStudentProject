@@ -21,7 +21,9 @@ app.use(express.json());
 
 
 const port = process.env.port || 9000;
-app.listen(port, "0.0.0.0", () => {
+const is_prod = false;
+const baseUrl = is_prod ? "0.0.0.0" : "127.0.0.1";
+app.listen(port, baseUrl, () => {
     console.log("Server running on port " + port);
 });
 
